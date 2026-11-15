@@ -1,0 +1,16 @@
+/* ---- borgbox2: alerts, automation, schedule editor, import, BorgBox wizard */
+
+.bb2-title3 { font-size: 1.2em; font-weight: 700; }
+.bb2-headline { font-weight: 600; }
+.bb2-header-icon { -gtk-icon-size: 24px; }
+.bb2-empty-icon { -gtk-icon-size: 36px; }
+.bb2-state-icon { -gtk-icon-size: 20px; }
+.bb2-status-icon { -gtk-icon-size: 13px; }
+.bb2-outcome image { -gtk-icon-size: 12px; }
+box.badge { border-spacing: 3px; }
+box.badge image { -gtk-icon-size: 10px; }
+button.bb2-small { min-height: 22px; padding: 1px 10px; font-size: 0.92em; }
+/* Denser grouped-form rows, closer to SwiftUI's `.formStyle(.grouped)`. */
+.bb2-form row box.header { min-height: 36px; }
+.bb2-form row.entry box.header { min-height: 46px; }
+.bb2-form row dropdown > button { min-height: 22px; padding-top: 2px; padding-bottom: 2px; }

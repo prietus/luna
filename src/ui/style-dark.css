@@ -1,0 +1,40 @@
+/* Dark-appearance overrides, loaded while the system prefers dark. */
+:root {
+  --accent-bg-color: #0a84ff;
+  --accent-color: #409cff;
+  --window-bg-color: #1e1e1e;
+  --window-fg-color: rgb(255 255 255 / 88%);
+  --view-bg-color: #1e1e1e;
+  --headerbar-bg-color: #1e1e1e;
+  --headerbar-backdrop-color: #1e1e1e;
+  --headerbar-shade-color: rgb(0 0 0 / 40%);
+  --sidebar-bg-color: #262627;
+  --sidebar-fg-color: rgb(255 255 255 / 88%);
+  --headerbar-fg-color: rgb(255 255 255 / 88%);
+  --view-fg-color: rgb(255 255 255 / 88%);
+  --dialog-fg-color: rgb(255 255 255 / 88%);
+  --popover-fg-color: rgb(255 255 255 / 88%);
+  --card-fg-color: rgb(255 255 255 / 88%);
+  --sidebar-backdrop-color: #242425;
+  --sidebar-shade-color: rgb(0 0 0 / 35%);
+  --dialog-bg-color: #232324;
+  --popover-bg-color: #2a2a2c;
+  --card-bg-color: rgb(255 255 255 / 5%);
+  --destructive-bg-color: #ff453a;
+  --destructive-color: #ff6961;
+  --warning-color: #ff9f0a;
+  --success-color: #30d158;
+  --error-color: #ff6961;
+  --mac-row-alt: rgb(255 255 255 / 4%);
+  --mac-row-hover: rgb(255 255 255 / 8%);
+  --mac-control: rgb(255 255 255 / 8%);
+  --mac-control-hover: rgb(255 255 255 / 14%);
+  --mac-separator: rgb(255 255 255 / 10%);
+  --mac-blue: #0a84ff;
+  --mac-orange: #ff9f0a;
+  --mac-green: #30d158;
+  --mac-red: #ff453a;
+  --mac-yellow: #ffd60a;
+  --mac-purple: #bf5af2;
+  --mac-gray: #98989d;
+}

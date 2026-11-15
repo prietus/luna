@@ -1,0 +1,58 @@
+/* Extra styles for the borgbase views. */
+
+/* `.title3.bold()` sheet headers. */
+.bb-title3 { font-size: 1.2em; font-weight: 700; }
+
+/* Segmented control (`Picker(...).pickerStyle(.segmented)`). */
+.mac-segmented {
+  background-color: var(--mac-control);
+  border-radius: 7px;
+  padding: 1px;
+  box-shadow: inset 0 0 0 0.5px var(--mac-separator);
+}
+.mac-segmented > button {
+  min-height: 22px; padding: 1px 14px; margin: 0;
+  border-radius: 6px;
+  background: none; box-shadow: none;
+  font-weight: 500;
+}
+.mac-segmented > button:hover { background-color: var(--mac-control); }
+.mac-segmented > button:checked { background-color: var(--accent-bg-color); color: white; }
+window:backdrop .mac-segmented > button:checked { background-color: var(--mac-control-hover); color: inherit; }
+
+/* Stand-alone wizard windows: a plain macOS title bar. */
+window.borg-wizard headerbar { min-height: 30px; }
+window.borg-wizard headerbar windowtitle .title,
+window.borg-wizard headerbar .title { font-weight: 700; font-size: 0.95em; }
+
+/* Caption lines that belong to a form section, under its rows. */
+.bb-form-note { margin: 8px 4px 0 4px; }
+.bb-dim-title .title { opacity: 0.6; }
+.bb-key-row .subtitle { font-family: "SF Mono", "JetBrains Mono", "Adwaita Mono", "DejaVu Sans Mono", monospace; font-size: 0.78em; }
+
+/* BorgBase panel. */
+.bb-token-page { padding: 20px; }
+.bb-section-picker { margin: 8px 14px; }
+.bb-strip { padding: 8px 20px; }
+.bb-footer { padding: 14px 20px; }
+.bb-aggregate-value { font-weight: 600; font-feature-settings: "tnum" 1; }
+.bb-digits { font-feature-settings: "tnum" 1; }
+.bb-small-icon { -gtk-icon-size: 13px; }
+.bb-tiny-icon { -gtk-icon-size: 11px; }
+.bb-key-icon { -gtk-icon-size: 20px; }
+list.bb-list > row { padding: 10px 10px; }
+list.bb-list > row:hover { background-color: transparent; }
+list.bb-list > row:nth-child(even):hover { background-color: var(--mac-row-alt); }
+.bb-pill {
+  font-size: 0.86em; font-weight: 500;
+  padding: 3px 8px; border-radius: 999px;
+  color: var(--mac-orange);
+  background-color: color-mix(in srgb, var(--mac-orange) 18%, transparent);
+}
+.bb-path { font-size: 0.8em; }
+
+/* Denser grouped forms, closer to macOS `Form { }.formStyle(.grouped)`. */
+.bb-compact row .header { min-height: 42px; }
+.bb-compact row.entry,
+.bb-compact row.entry .header,
+.bb-compact row.entry .editable-area { min-height: 44px; }

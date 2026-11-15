@@ -1,0 +1,51 @@
+/* Schedules, manual backup and passphrase sheets. */
+
+.sched-title3 { font-size: 1.2em; font-weight: 700; }
+.sched-title-icon { -gtk-icon-size: 20px; }
+.sched-header-icon { -gtk-icon-size: 24px; }
+.sched-empty-icon { -gtk-icon-size: 36px; }
+
+/* Rounded-border text fields (`.textFieldStyle(.roundedBorder)`). */
+entry.sched-field { min-height: 26px; border-radius: 6px; padding: 0 8px; }
+
+/* ---- schedule list ---- */
+list.sched-list { padding: 0; }
+list.sched-list > row { padding: 4px 8px; }
+.sched-row-name { font-weight: 500; }
+.sched-row-icon { -gtk-icon-size: 20px; }
+button.sched-delete-badge { color: var(--mac-red); -gtk-icon-size: 12px; padding: 0; margin: 0; }
+button.sched-run { color: var(--accent-bg-color); -gtk-icon-size: 22px; }
+button.sched-run:disabled { opacity: 0.3; }
+button.sched-stop { -gtk-icon-size: 18px; opacity: 0.45; }
+button.sched-stop:hover { opacity: 0.8; }
+progressbar.sched-progress > trough,
+progressbar.sched-progress > trough > progress { min-height: 4px; border-radius: 2px; }
+button.sched-add > box { border-spacing: 4px; }
+button.sched-add image { -gtk-icon-size: 14px; }
+
+switch.sched-switch { min-width: 0; min-height: 0; padding: 2px; }
+switch.sched-switch > slider { min-width: 15px; min-height: 15px; margin: 0; }
+switch.sched-switch > image { min-width: 0; min-height: 0; -gtk-icon-size: 0; }
+
+/* ---- editor ---- */
+.sched-group-title { font-size: 0.92em; font-weight: 500; margin-left: 2px; }
+.sched-group { padding: 10px 12px; }
+button.mac.small,
+menubutton.mac.small > button { min-height: 22px; padding: 1px 10px; font-size: 0.92em; }
+menubutton.mac > button {
+  min-height: 26px; padding: 2px 14px; border-radius: 7px; font-weight: 500;
+}
+menubutton.mac > button image { -gtk-icon-size: 14px; }
+.sched-segmented > button { min-height: 24px; padding: 1px 12px; font-weight: 500; }
+.sched-segmented > button:checked {
+  background-color: var(--accent-bg-color); color: white;
+}
+spinbutton.sched-spin { min-height: 26px; }
+spinbutton.sched-spin > text { min-width: 0; padding: 0 6px; }
+spinbutton.sched-spin > button { min-width: 22px; min-height: 22px; padding: 0; }
+dropdown.sched-popup > button { min-height: 26px; padding: 1px 10px; border-radius: 7px; }
+
+/* ---- manual backup form ---- */
+row.sched-form-row { padding: 8px 12px; min-height: 22px; }
+button.sched-borderless { opacity: 0.7; }
+button.sched-borderless:hover { opacity: 1; }

@@ -1,0 +1,18 @@
+/* BorgBox server panel and its sheets. */
+.bb-title-icon { -gtk-icon-size: 22px; }
+.bb-state-icon { -gtk-icon-size: 36px; }
+.bb-medium { font-weight: 500; }
+.bb-chevron { -gtk-icon-size: 12px; }
+button.mac.bb-small { min-height: 22px; padding: 1px 10px; font-size: 0.9em; }
+button.mac.bb-small image { -gtk-icon-size: 12px; }
+box.badge { padding: 1px 8px; }
+box.badge image { -gtk-icon-size: 10px; }
+/* Expanded job log: text-view background with a hairline border. */
+scrolledwindow.bb-log {
+  background-color: var(--view-bg-color);
+  border-radius: 6px;
+  border: 1px solid color-mix(in srgb, currentColor 20%, transparent);
+}
+scrolledwindow.bb-log label { padding: 6px; }
+/* `.caption.monospaced()`: keep the caption size (`.mono` alone resets it). */
+.bb-panel .caption.mono { font-size: 0.84em; }

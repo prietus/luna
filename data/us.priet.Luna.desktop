@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Name=Luna
+GenericName=Backup client
+Comment=Desktop client for Borg backup repositories
+Exec=luna
+Icon=us.priet.Luna
+Terminal=false
+Categories=Utility;Archiving;System;GTK;
+Keywords=backup;borg;borgbackup;borgbase;borgbox;
+StartupNotify=true
+StartupWMClass=us.priet.Luna

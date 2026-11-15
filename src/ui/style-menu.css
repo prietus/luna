@@ -1,0 +1,41 @@
+/* --- group: menu (statistics panel, tray popover) --- */
+
+/* Statistics */
+.stats-value { font-size: 1.22em; font-weight: 700; font-feature-settings: "tnum" 1; }
+.stats-metric-icon { -gtk-icon-size: 20px; }
+.stats-medium { font-weight: 500; }
+.stats-digits { font-feature-settings: "tnum" 1; }
+.stats-dot { border-radius: 999px; min-width: 0; min-height: 0; }
+.stats-dot.d-blue { background-color: var(--mac-blue); }
+.stats-dot.d-green { background-color: var(--mac-green); }
+.stats-dot.d-yellow { background-color: var(--mac-yellow); }
+
+/* Tray popover (MenuBarExtra window) */
+window.borg-menu {
+  background-color: var(--popover-bg-color);
+  color: var(--popover-fg-color);
+  box-shadow: inset 0 0 0 1px var(--mac-separator);
+}
+window.borg-menu.layer { border-radius: 12px; }
+.borg-menu .menu-headline { font-weight: 700; }
+.borg-menu .menu-section { font-size: 0.86em; font-weight: 600; opacity: 0.6; }
+.borg-menu button.menu-row {
+  background: none; box-shadow: none; border-radius: 6px;
+  padding: 6px 6px; margin: 0 6px; min-height: 0;
+  font-weight: normal;
+}
+.borg-menu button.menu-row:hover { background-color: var(--mac-row-hover); }
+.borg-menu button.menu-row:active {
+  background-color: color-mix(in srgb, var(--accent-bg-color) 25%, transparent);
+}
+.borg-menu .menu-mono {
+  font-family: "SF Mono", "JetBrains Mono", "Adwaita Mono", "DejaVu Sans Mono", monospace;
+  font-size: 0.76em;
+}
+.borg-menu .menu-row-icon { -gtk-icon-size: 16px; }
+.borg-menu .menu-chevron { -gtk-icon-size: 10px; opacity: 0.4; }
+.borg-menu button.menu-inline { opacity: 0.45; -gtk-icon-size: 16px; }
+.borg-menu button.menu-inline:hover { opacity: 0.9; }
+.borg-menu progressbar.menu-progress > trough,
+.borg-menu progressbar.menu-progress > trough > progress { min-height: 4px; border-radius: 2px; }
+.borg-menu scrolledwindow { background: none; }
