@@ -75,7 +75,8 @@ fn load_css() {
 }
 
 /// `start_hidden`: come up as a tray icon only (`luna --background`), for
-/// autostart. Falls back to showing the window when there is no tray host.
+/// autostart. The tray host may not be up yet at login, so the icon waits for
+/// it instead of falling back to the window.
 pub fn run(start_hidden: bool) -> glib::ExitCode {
     // Screenshot runs (see `debug.rs`) must not be swallowed by an instance
     // that is already running.
@@ -100,7 +101,7 @@ pub fn run(start_hidden: bool) -> glib::ExitCode {
             // Like the Mac app, keep running in the background behind the
             // tray icon after the last window closes. Without a tray host
             // there would be no way back in, so then closing the window quits.
-            if tray::start(&app) {
+            if tray::start(&app, start_hidden) {
                 app.tray_active.set(true);
                 std::mem::forget(application.hold());
             }

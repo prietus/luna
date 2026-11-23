@@ -252,7 +252,11 @@ fn app_icon_pixmap() -> Vec<ksni::Icon> {
 
 /// Registers the tray icon. Returns false when no StatusNotifier host is
 /// available (the app then quits when its last window closes).
-pub fn start(app: &Rc<AppState>) -> bool {
+///
+/// `wait_for_host`: for `luna --background` at login, which usually races
+/// the bar that provides the StatusNotifierWatcher. A missing watcher is then
+/// not an error: the item registers as soon as one appears on the bus.
+pub fn start(app: &Rc<AppState>, wait_for_host: bool) -> bool {
     // Screenshot runs happen in a throwaway compositor but on the user's
     // session bus: keep them out of the real tray.
     if std::env::var_os("LUNA_SHOT_DIR").is_some() && std::env::var_os("LUNA_DEBUG_TRAY").is_none() {
@@ -279,7 +283,7 @@ pub fn start(app: &Rc<AppState>) -> bool {
     // against a session bus that does not answer at all.
     let (done, registered) = std::sync::mpsc::channel();
     std::thread::spawn(move || {
-        let result = tray.spawn().map_err(|e| e.to_string());
+        let result = tray.assume_sni_available(wait_for_host).spawn().map_err(|e| e.to_string());
         if let Err(std::sync::mpsc::SendError(Ok(late))) = done.send(result) {
             late.shutdown().wait();
         }
