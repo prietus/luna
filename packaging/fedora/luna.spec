@@ -5,12 +5,8 @@
 # Fedora, so they are vendored: Source1 is made with
 #   cargo vendor && tar cJf luna-%%{version}-vendor.tar.xz vendor/
 
-%global commit      3518ca132e6add7bebb3e39e3845e4bc140f0b83
-%global shortcommit %(c=%{commit}; echo ${c:0:7})
-%global commitdate  20261124
-
 Name:           luna
-Version:        0.1.0^%{commitdate}git%{shortcommit}
+Version:        0.1.1
 Release:        1%{?dist}
 Summary:        GTK4 client for Borg backup repositories
 
@@ -18,7 +14,8 @@ SourceLicense:  MIT
 # Licenses of luna and the vendored crates (%%cargo_license_summary).
 License:        MIT AND Apache-2.0 AND BSD-3-Clause AND CDLA-Permissive-2.0 AND ISC AND Unicode-3.0 AND Unlicense AND (Apache-2.0 OR MIT) AND (0BSD OR MIT OR Apache-2.0) AND (Apache-2.0 OR ISC OR MIT) AND (Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT) AND (MIT OR Apache-2.0 OR LGPL-2.1-or-later) AND (MIT OR Zlib OR Apache-2.0) AND (Unlicense OR MIT)
 URL:            https://github.com/prietus/luna
-Source0:        %{url}/archive/%{commit}/%{name}-%{shortcommit}.tar.gz
+Source0:        %{url}/archive/v%{version}/%{name}-%{version}.tar.gz
+# The crates are the same as in 0.1.0, so its vendor tarball still applies.
 Source1:        %{name}-0.1.0-vendor.tar.xz
 
 ExclusiveArch:  %{rust_arches}
@@ -48,7 +45,7 @@ and self-hosted BorgBox servers.
 
 
 %prep
-%autosetup -n %{name}-%{commit} -a1
+%autosetup -n %{name}-%{version} -a1
 %cargo_prep -v vendor
 
 
@@ -83,6 +80,10 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/us.priet.Luna.desktop
 
 
 %changelog
+* Tue Nov 24 2026 Carlos Prieto Ortiz <prietus@live.com> - 0.1.1-1
+- Update to 0.1.1
+- New app and tray icon: crescent moon with a backup disk
+
 * Tue Nov 24 2026 Carlos Prieto Ortiz <prietus@live.com> - 0.1.0^20261124git3518ca1-1
 - Update to 3518ca1
 - luna --background waits for the tray host instead of falling back to the window
