@@ -11,7 +11,7 @@ use crate::core::snapshot::{self, Health};
 use crate::core::{format, paths, schedule};
 use adw::prelude::*;
 use chrono::Local;
-use gtk::glib;
+use gtk::{gio, glib};
 use ksni::blocking::TrayMethods;
 use ksni::menu::{MenuItem, StandardItem, SubMenu};
 use std::cell::RefCell;
@@ -260,6 +260,70 @@ fn pixmap(path: &std::path::Path, size: i32) -> Option<ksni::Icon> {
 
 // --------------------------------------------------------------------- start
 
+const WATCHER: &str = "org.kde.StatusNotifierWatcher";
+
+/// ksni registers with the StatusNotifierWatcher, and when there is none it
+/// waits for one to appear. But it subscribes to that only after its first
+/// attempt failed, so a bar that takes the watcher name in between (both
+/// started by the compositor at login) is never told about the icon. Watch
+/// the name here too and register again whenever the item is missing.
+fn keep_registered() {
+    // ksni's name for the first (and only) tray of this process.
+    let item = format!("org.kde.StatusNotifierItem-{}-1", std::process::id());
+    let id = gio::bus_watch_name(
+        gio::BusType::Session,
+        WATCHER,
+        gio::BusNameWatcherFlags::NONE,
+        move |conn, _, _| {
+            let item = item.clone();
+            glib::spawn_future_local(async move {
+                // Give ksni's own registration (and the bar's setup) a moment.
+                glib::timeout_future(Duration::from_secs(1)).await;
+                if !is_registered(&conn, &item).await {
+                    eprintln!("[tray] re-registering with the StatusNotifierWatcher");
+                    let _ = conn
+                        .call_future(
+                            Some(WATCHER),
+                            "/StatusNotifierWatcher",
+                            WATCHER,
+                            "RegisterStatusNotifierItem",
+                            Some(&(item.as_str(),).to_variant()),
+                            None,
+                            gio::DBusCallFlags::NONE,
+                            5000,
+                        )
+                        .await;
+                }
+            });
+        },
+        |_, _| {},
+    );
+    // For the life of the app.
+    std::mem::forget(id);
+}
+
+async fn is_registered(conn: &gio::DBusConnection, item: &str) -> bool {
+    let reply = conn
+        .call_future(
+            Some(WATCHER),
+            "/StatusNotifierWatcher",
+            "org.freedesktop.DBus.Properties",
+            "Get",
+            Some(&(WATCHER, "RegisteredStatusNotifierItems").to_variant()),
+            None,
+            gio::DBusCallFlags::NONE,
+            5000,
+        )
+        .await;
+    let items = reply
+        .ok()
+        .and_then(|r| r.child_value(0).as_variant())
+        .and_then(|v| v.get::<Vec<String>>())
+        .unwrap_or_default();
+    // Entries are "service/path" or just "service".
+    items.iter().any(|i| i == item || i.starts_with(&format!("{item}/")))
+}
+
 /// Registers the tray icon. Returns false when no StatusNotifier host is
 /// available (the app then quits when its last window closes).
 ///
@@ -304,6 +368,7 @@ pub fn start(app: &Rc<AppState>, wait_for_host: bool) -> bool {
         }
     };
     super::debug::tray_probe();
+    keep_registered();
 
     // Main thread → tray: push a fresh snapshot whenever it differs.
     let shown = RefCell::new(initial);
