@@ -6,7 +6,7 @@
 #   cargo vendor && tar cJf luna-%%{version}-vendor.tar.xz vendor/
 
 Name:           luna
-Version:        0.1.1
+Version:        0.1.2
 Release:        1%{?dist}
 Summary:        GTK4 client for Borg backup repositories
 
@@ -80,6 +80,10 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/us.priet.Luna.desktop
 
 
 %changelog
+* Tue Nov 24 2026 Carlos Prieto Ortiz <prietus@live.com> - 0.1.2-1
+- Update to 0.1.2
+- The tray icon registers again when it was lost at login (race with the bar)
+
 * Tue Nov 24 2026 Carlos Prieto Ortiz <prietus@live.com> - 0.1.1-1
 - Update to 0.1.1
 - New app and tray icon: crescent moon with a backup disk
