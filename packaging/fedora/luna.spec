@@ -5,9 +5,9 @@
 # Fedora, so they are vendored: Source1 is made with
 #   cargo vendor && tar cJf luna-%%{version}-vendor.tar.xz vendor/
 
-%global commit      44a4e9ffce53b8fba1a650623ea0d7057f124e2f
+%global commit      3518ca132e6add7bebb3e39e3845e4bc140f0b83
 %global shortcommit %(c=%{commit}; echo ${c:0:7})
-%global commitdate  20261116
+%global commitdate  20261124
 
 Name:           luna
 Version:        0.1.0^%{commitdate}git%{shortcommit}
@@ -83,5 +83,10 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/us.priet.Luna.desktop
 
 
 %changelog
+* Tue Nov 24 2026 Carlos Prieto Ortiz <prietus@live.com> - 0.1.0^20261124git3518ca1-1
+- Update to 3518ca1
+- luna --background waits for the tray host instead of falling back to the window
+- Colour tray icon that shows the backup state
+
 * Mon Nov 23 2026 Carlos Prieto Ortiz <prietus@live.com> - 0.1.0^20261116git44a4e9f-1
 - First Fedora package
