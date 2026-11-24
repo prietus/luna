@@ -49,14 +49,17 @@ struct TrayData {
     state: String,
     /// Tooltip body: running and failed schedules, then the next backup.
     description: String,
+    /// Picks the icon: a coloured archive box with ✓, ↻ or !.
+    health: Health,
 }
 
 struct BorgTray {
     data: TrayData,
     commands: async_channel::Sender<Command>,
-    icon_name: String,
     icon_theme_path: String,
-    icon_pixmap: Vec<ksni::Icon>,
+    /// Per health (see `health_index`): for hosts that can't load the
+    /// icon by name, or that cached the theme directory before it existed.
+    icon_pixmaps: [Vec<ksni::Icon>; 3],
 }
 
 impl BorgTray {
@@ -90,7 +93,7 @@ impl ksni::Tray for BorgTray {
     }
 
     fn icon_name(&self) -> String {
-        self.icon_name.clone()
+        health_icon(self.data.health).to_string()
     }
 
     fn icon_theme_path(&self) -> String {
@@ -98,12 +101,12 @@ impl ksni::Tray for BorgTray {
     }
 
     fn icon_pixmap(&self) -> Vec<ksni::Icon> {
-        self.icon_pixmap.clone()
+        self.icon_pixmaps[health_index(self.data.health)].clone()
     }
 
     fn tool_tip(&self) -> ksni::ToolTip {
         ksni::ToolTip {
-            icon_name: self.icon_name.clone(),
+            icon_name: self.icon_name(),
             icon_pixmap: vec![],
             title: self.title(),
             description: self.data.description.clone(),
@@ -225,27 +228,47 @@ fn tray_data(app: &AppState) -> TrayData {
         }
         None => "No scheduled backups".to_string(),
     });
-    TrayData { rows, state, description: description.join("\n") }
+    TrayData { rows, state, description: description.join("\n"), health }
 }
 
-/// The app icon as an SNI pixmap (ARGB32, network byte order) for hosts
-/// that cannot resolve the icon by name.
-fn app_icon_pixmap() -> Vec<ksni::Icon> {
-    let path = super::app::icons_dir().join(format!("{}.png", paths::APP_ID));
-    let Ok(pixbuf) = gtk::gdk_pixbuf::Pixbuf::from_file_at_size(&path, 32, 32) else { return vec![] };
+/// Full-colour icons (not `-symbolic`, so bars don't recolour them), shipped
+/// in the directory passed as the item's IconThemePath.
+const HEALTH_ICONS: [&str; 3] = ["luna-tray-ok", "luna-tray-running", "luna-tray-error"];
+
+fn health_index(health: Health) -> usize {
+    match health {
+        Health::Ok => 0,
+        Health::Running => 1,
+        Health::Error => 2,
+    }
+}
+
+fn health_icon(health: Health) -> &'static str {
+    HEALTH_ICONS[health_index(health)]
+}
+
+/// An unpacked icon as SNI pixmaps (ARGB32, network byte order), at the
+/// sizes bars commonly draw.
+fn icon_pixmaps(file: &str) -> Vec<ksni::Icon> {
+    let path = super::app::icons_dir().join(file);
+    [22, 32, 64].into_iter().filter_map(|size| pixmap(&path, size)).collect()
+}
+
+fn pixmap(path: &std::path::Path, size: i32) -> Option<ksni::Icon> {
+    let pixbuf = gtk::gdk_pixbuf::Pixbuf::from_file_at_size(path, size, size).ok()?;
     if pixbuf.n_channels() != 4 || pixbuf.bits_per_sample() != 8 {
-        return vec![];
+        return None;
     }
     let (width, height, stride) = (pixbuf.width() as usize, pixbuf.height() as usize, pixbuf.rowstride() as usize);
     let pixels = pixbuf.read_pixel_bytes();
     let mut data = Vec::with_capacity(width * height * 4);
     for y in 0..height {
-        let Some(line) = pixels.get(y * stride..y * stride + width * 4) else { return vec![] };
+        let line = pixels.get(y * stride..y * stride + width * 4)?;
         for rgba in line.chunks_exact(4) {
             data.extend_from_slice(&[rgba[3], rgba[0], rgba[1], rgba[2]]);
         }
     }
-    vec![ksni::Icon { width: width as i32, height: height as i32, data }]
+    Some(ksni::Icon { width: width as i32, height: height as i32, data })
 }
 
 // --------------------------------------------------------------------- start
@@ -263,19 +286,13 @@ pub fn start(app: &Rc<AppState>, wait_for_host: bool) -> bool {
         return false;
     }
 
-    // A symbolic box like the Mac's `shippingbox.fill`; the app icon when
-    // the icon theme has none.
-    let themed = gtk::gdk::Display::default()
-        .map(|d| gtk::IconTheme::for_display(&d).has_icon(kit::icons::BOX))
-        .unwrap_or(false);
     let (commands, received) = async_channel::unbounded::<Command>();
     let initial = tray_data(app);
     let tray = BorgTray {
         data: initial.clone(),
         commands,
-        icon_name: if themed { kit::icons::BOX.to_string() } else { paths::APP_ID.to_string() },
         icon_theme_path: super::app::icons_dir().to_string_lossy().into_owned(),
-        icon_pixmap: app_icon_pixmap(),
+        icon_pixmaps: HEALTH_ICONS.map(|name| icon_pixmaps(&format!("{name}.svg"))),
     };
 
     // `spawn` only succeeds once a StatusNotifierWatcher accepted the item.
