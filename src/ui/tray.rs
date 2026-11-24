@@ -49,17 +49,15 @@ struct TrayData {
     state: String,
     /// Tooltip body: running and failed schedules, then the next backup.
     description: String,
-    /// Picks the icon: a coloured archive box with ✓, ↻ or !.
-    health: Health,
 }
 
 struct BorgTray {
     data: TrayData,
     commands: async_channel::Sender<Command>,
     icon_theme_path: String,
-    /// Per health (see `health_index`): for hosts that can't load the
-    /// icon by name, or that cached the theme directory before it existed.
-    icon_pixmaps: [Vec<ksni::Icon>; 3],
+    /// For hosts that can't load the icon by name, or that cached the theme
+    /// directory before the file existed.
+    icon_pixmap: Vec<ksni::Icon>,
 }
 
 impl BorgTray {
@@ -93,7 +91,7 @@ impl ksni::Tray for BorgTray {
     }
 
     fn icon_name(&self) -> String {
-        health_icon(self.data.health).to_string()
+        TRAY_ICON.to_string()
     }
 
     fn icon_theme_path(&self) -> String {
@@ -101,7 +99,7 @@ impl ksni::Tray for BorgTray {
     }
 
     fn icon_pixmap(&self) -> Vec<ksni::Icon> {
-        self.icon_pixmaps[health_index(self.data.health)].clone()
+        self.icon_pixmap.clone()
     }
 
     fn tool_tip(&self) -> ksni::ToolTip {
@@ -228,24 +226,13 @@ fn tray_data(app: &AppState) -> TrayData {
         }
         None => "No scheduled backups".to_string(),
     });
-    TrayData { rows, state, description: description.join("\n"), health }
+    TrayData { rows, state, description: description.join("\n") }
 }
 
-/// Full-colour icons (not `-symbolic`, so bars don't recolour them), shipped
-/// in the directory passed as the item's IconThemePath.
-const HEALTH_ICONS: [&str; 3] = ["luna-tray-ok", "luna-tray-running", "luna-tray-error"];
-
-fn health_index(health: Health) -> usize {
-    match health {
-        Health::Ok => 0,
-        Health::Running => 1,
-        Health::Error => 2,
-    }
-}
-
-fn health_icon(health: Health) -> &'static str {
-    HEALTH_ICONS[health_index(health)]
-}
+/// Full-colour icon (not `-symbolic`, so bars don't recolour it), shipped
+/// in the directory passed as the item's IconThemePath. The state is in the
+/// title and tooltip.
+const TRAY_ICON: &str = "luna-tray";
 
 /// An unpacked icon as SNI pixmaps (ARGB32, network byte order), at the
 /// sizes bars commonly draw.
@@ -292,7 +279,7 @@ pub fn start(app: &Rc<AppState>, wait_for_host: bool) -> bool {
         data: initial.clone(),
         commands,
         icon_theme_path: super::app::icons_dir().to_string_lossy().into_owned(),
-        icon_pixmaps: HEALTH_ICONS.map(|name| icon_pixmaps(&format!("{name}.svg"))),
+        icon_pixmap: icon_pixmaps(&format!("{TRAY_ICON}.png")),
     };
 
     // `spawn` only succeeds once a StatusNotifierWatcher accepted the item.

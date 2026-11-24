@@ -35,9 +35,7 @@ const ICONS: &[(&str, &[u8])] = &[
     ("borg-plus-circle-symbolic.svg", include_bytes!("../../data/icons/borg-plus-circle-symbolic.svg")),
     ("borg-ellipsis-circle-symbolic.svg", include_bytes!("../../data/icons/borg-ellipsis-circle-symbolic.svg")),
     ("us.priet.Luna.png", include_bytes!("../../data/icons/us.priet.Luna.png")),
-    ("luna-tray-ok.svg", include_bytes!("../../data/icons/luna-tray-ok.svg")),
-    ("luna-tray-running.svg", include_bytes!("../../data/icons/luna-tray-running.svg")),
-    ("luna-tray-error.svg", include_bytes!("../../data/icons/luna-tray-error.svg")),
+    ("luna-tray.png", include_bytes!("../../data/icons/luna-tray.png")),
 ];
 
 /// Directory holding the unpacked icons (also used by the tray icon).
