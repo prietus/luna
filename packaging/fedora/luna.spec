@@ -6,7 +6,7 @@
 #   cargo vendor && tar cJf luna-%%{version}-vendor.tar.xz vendor/
 
 Name:           luna
-Version:        0.1.2
+Version:        0.1.3
 Release:        1%{?dist}
 Summary:        GTK4 client for Borg backup repositories
 
@@ -80,6 +80,10 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/us.priet.Luna.desktop
 
 
 %changelog
+* Wed Nov 25 2026 Carlos Prieto Ortiz <prietus@live.com> - 0.1.3-1
+- Update to 0.1.3
+- luna --overview-json: the overview as structured JSON, for desktop widgets
+
 * Tue Nov 24 2026 Carlos Prieto Ortiz <prietus@live.com> - 0.1.2-1
 - Update to 0.1.2
 - The tray icon registers again when it was lost at login (race with the bar)
