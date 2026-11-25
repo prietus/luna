@@ -57,6 +57,7 @@ Same feature set as BorgMac:
       "on-click": "luna"
   }
   ```
+- `luna --overview-json` prints the same overview as structured JSON (usage by provider and by repository, and every schedule with its last result, next run and live progress), for desktop widgets such as the backups card of [hasklets](https://github.com/prietus/hasklets).
 
   The module's CSS class is `ok`, `running` or `error`; the tooltip lists usage, running and failed schedules and the next backup.
 

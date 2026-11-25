@@ -15,6 +15,11 @@ fn main() -> gtk::glib::ExitCode {
         println!("{}", core::snapshot::waybar_json());
         return gtk::glib::ExitCode::SUCCESS;
     }
+    // Structured overview for desktop widgets.
+    if args.len() >= 2 && args[1] == "--overview-json" {
+        println!("{}", core::snapshot::overview_json());
+        return gtk::glib::ExitCode::SUCCESS;
+    }
     if args.len() >= 2 && (args[1] == "--version" || args[1] == "-V") {
         println!("Luna {}", env!("CARGO_PKG_VERSION"));
         return gtk::glib::ExitCode::SUCCESS;

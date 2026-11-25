@@ -170,6 +170,51 @@ pub fn refresh_schedules_from_disk(statuses: &HashMap<Uuid, BackupRunStatus>) {
     refresh_schedules(&store::load_repositories(), statuses);
 }
 
+/// Structured overview for desktop widgets (`luna --overview-json`): the
+/// usage numbers of the last snapshot plus the state of every schedule.
+/// Computed live from the repository list and the status files, like
+/// `waybar_json`, so it is correct even when the GUI isn't running.
+pub fn overview_json() -> String {
+    let repos = store::load_repositories();
+    let statuses = super::status::read_all();
+    let (next, health) = summarize_schedules(&repos, &statuses);
+    let previous = Snapshot::load();
+    let now = Local::now();
+
+    let mut schedules = vec![];
+    for repo in &repos {
+        for sched in &repo.schedules {
+            let st = statuses.get(&sched.id);
+            let live = st.filter(|s| s.running);
+            schedules.push(serde_json::json!({
+                "repoName": repo.name,
+                "scheduleName": sched.display_name(),
+                "running": live.is_some(),
+                // Fraction of the previous run's size, when there was one.
+                "progress": live.and_then(|s| s.progress_ratio()),
+                "progressBytes": live.and_then(|s| s.progress_original_bytes),
+                "lastRun": st.and_then(|s| s.last_run),
+                "lastSuccess": st.and_then(|s| s.last_success),
+                "lastError": st.and_then(|s| s.last_error.clone()),
+                "nextFire": schedule::next_fire_date(sched, now).map(|d| d.with_timezone(&Utc)),
+            }));
+        }
+    }
+
+    serde_json::json!({
+        "version": 1,
+        "health": health,
+        "repoCount": repos.len(),
+        "archiveCount": previous.as_ref().map(|p| p.archive_count).unwrap_or(0),
+        "totalUsageBytes": previous.as_ref().map(|p| p.total_usage_bytes).unwrap_or(0),
+        "byProvider": previous.as_ref().map(|p| p.by_provider.clone()).unwrap_or_default(),
+        "topRepos": previous.as_ref().map(|p| p.top_repos.clone()).unwrap_or_default(),
+        "nextBackup": next,
+        "schedules": schedules,
+    })
+    .to_string()
+}
+
 /// Payload for a waybar `custom` module (`return-type: json`): always
 /// computed live from the repository list and the status files so it is
 /// correct even when the GUI isn't running; usage numbers come from the
